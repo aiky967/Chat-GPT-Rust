@@ -16,13 +16,6 @@ struct OAIChoices {
     finish_reason: String,
 }
 
-// a struct for the request to make to the API
-#[derive(Serialize, Debug)]
-struct OAIRequest {
-    prompt: String,
-    max_tokens: u16,
-}
-
 // a struct to wrok with API response
 #[derive(Deserialize, Debug)]
 struct OAIResponse {
@@ -31,6 +24,13 @@ struct OAIResponse {
     created: Option<u64>,
     model: Option<String>,
     choices: Vec<OAIChoices>,
+}
+
+// a struct for the request to make to the API
+#[derive(Serialize, Debug)]
+struct OAIRequest {
+    prompt: String,
+    max_tokens: u16,
 }
 
 
@@ -44,8 +44,11 @@ async fn main() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
     let client = Client::builder().build(https);
     // URL to which we will make the request
     let uri = "https://api.openai.com/v1/engines/text-davinci-001/completions";
-    // preamble, prompt to chatGPT
-    let preamble = "Generate a Sql code for the given statement";
+    // preamble, prompt to chatGPT -> You can use this prompt to get the answers in your interests
+    // let preamble = "Answer the following question
+    // accurately, but find a funny way to mention
+    // the Rust programming language in your response.";
+    let preamble = "Write a SQL query according to the sentence";
     // token, in the header read from .env file
     let oai_token: String = env::var("OAI_TOKEN").unwrap();
     let auth_header_val = format!("Bearer {}", oai_token);
@@ -53,7 +56,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
 
     loop {
         // loop, inside the loop a way to read user input
-        println!(">");
+        print!(">");
         stdout().flush().unwrap();
         let mut user_text = String::new();
 
